@@ -162,7 +162,7 @@
       <div class="step">
         <div class="n">1</div>
         <h3>Escanea el QR</h3>
-        <p>En el mostrador o aquí mismo en esta página. Te registras con tu nombre y tu celular, nada más.</p>
+        <p>En el mostrador o aquí mismo en esta página. Te registras con tu nombre, tu celular y tu fecha de nacimiento.</p>
       </div>
       <div class="step">
         <div class="n">2</div>
@@ -194,9 +194,9 @@
             <input id="regPhone" type="tel" placeholder="Ej. 4421234567" pattern="[0-9 ]{10,13}" required autocomplete="tel">
           </div>
           <div class="field">
-            <label for="regBirthdate">Fecha de nacimiento (opcional)</label>
-            <input id="regBirthdate" type="date" autocomplete="bday">
-            <p style="font-size:.8rem;color:var(--muted);margin-top:5px">Solo la usamos para enviarte tu promo de cumpleaños.</p>
+            <label for="regBirthdate">Fecha de nacimiento</label>
+            <input id="regBirthdate" type="date" autocomplete="bday" required>
+            <p style="font-size:.8rem;color:var(--muted);margin-top:5px">Te la pedimos para enviarte tu promo de cumpleaños.</p>
           </div>
           <button class="btn btn-dark" type="submit">Crear mi tarjeta</button>
         </form>
@@ -304,7 +304,14 @@
     const name = $("regName").value.trim();
     const phone = $("regPhone").value.trim();
     const birthdate = $("regBirthdate").value || "";
-    if (!name || !phone) return;
+    const missing = [];
+    if (!name) missing.push("nombre");
+    if (!phone) missing.push("celular");
+    if (!birthdate) missing.push("fecha de nacimiento");
+    if (missing.length) {
+      $("registerMsg").textContent = "Falta: " + missing.join(", ") + ". Completa los tres datos para crear tu tarjeta.";
+      return;
+    }
     const n = Math.floor(1000 + Math.random() * 9000);
     member = { id: "SL-" + n, name, phone, birthdate, stamps: 0 };
     save(); renderPass(); renderQR();

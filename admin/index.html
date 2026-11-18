@@ -79,6 +79,9 @@
   .lock-notif .msg{font-size:.83rem; color:#fff; margin-top:2px}
   .lock-notif .title{font-size:.83rem; font-weight:700; color:#fff; margin-top:2px}
   .flow-note{margin-top:14px; background:#1c1c1c; border:1px solid #3a3a3a; border-radius:12px; padding:12px 14px; font-size:.84rem; color:#e8e8e8}
+  #loginScreen{max-width:430px; margin:56px auto 0}
+  #loginError{display:none; background:#3a0d0d; border:1px solid #7a1f1f; color:#ffb3b3; border-radius:10px; padding:11px 13px; font-size:.88rem; font-weight:700; margin-top:12px}
+  #loginError.show{display:block}
   .flow-note b{color:#fff}
   footer{background:var(--green); color:#fff; padding:22px 0; font-size:.86rem}
   footer a{color:var(--gold)}
@@ -95,11 +98,31 @@
     <nav>
       <a href="../index.html">← Ver la tarjeta del cliente</a>
       <a href="../docs/COMO-FUNCIONA.md">Cómo funciona</a>
+      <button class="btn btn-dark" id="logoutBtn" style="display:none;padding:8px 14px;margin-left:10px">Cerrar sesión</button>
     </nav>
   </div>
 </header>
 
-<main class="wrap">
+<div class="wrap" id="loginScreen" style="display:none">
+  <div class="card">
+    <h2>Acceso al panel</h2>
+    <p class="hint">Solo el equipo de Smoothie Lab. En esta demo la verificación es en el navegador (candado básico, no seguridad real): en producción el acceso lo valida el servidor.</p>
+    <form id="loginForm">
+      <div class="field">
+        <label for="loginUser">Usuario</label>
+        <input id="loginUser" type="text" placeholder="Usuario" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="loginPass">Contraseña</label>
+        <input id="loginPass" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn-gold" type="submit" style="width:100%">Entrar al panel</button>
+    </form>
+    <div id="loginError">Usuario o contraseña incorrectos. Revisa los datos e inténtalo de nuevo.</div>
+  </div>
+</div>
+
+<main class="wrap" id="adminApp" style="display:none">
   <h1>Club Smoothie Lab <span class="demo-badge">DEMO · datos de ejemplo</span></h1>
   <p class="sub">Panel del negocio. Los datos de ejemplo viven en <code>data/demo-members.json</code> y tus cambios se guardan en este navegador (localStorage). En producción, todo vive en el servidor.</p>
 
@@ -315,6 +338,39 @@
   }
 
   const $ = (id) => document.getElementById(id);
+
+  // --- Acceso al panel (demo: verificación en el navegador, no seguridad real) ---
+  const AUTH_KEY = "smoothieLabAdminAuth";
+  const ADMIN_USER = "Admin";
+  const ADMIN_PASS = "smoothie$";
+  function showApp() {
+    $("loginScreen").style.display = "none";
+    $("adminApp").style.display = "block";
+    $("logoutBtn").style.display = "inline-block";
+  }
+  function showLogin() {
+    $("adminApp").style.display = "none";
+    $("logoutBtn").style.display = "none";
+    $("loginScreen").style.display = "block";
+  }
+  $("loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if ($("loginUser").value.trim() === ADMIN_USER && $("loginPass").value === ADMIN_PASS) {
+      sessionStorage.setItem(AUTH_KEY, "1");
+      $("loginError").classList.remove("show");
+      $("loginPass").value = "";
+      showApp();
+      if (!data) load();
+    } else {
+      $("loginError").classList.add("show");
+      $("loginPass").value = "";
+      $("loginPass").focus();
+    }
+  });
+  $("logoutBtn").addEventListener("click", () => {
+    sessionStorage.removeItem(AUTH_KEY);
+    showLogin();
+  });
 
   function load() {
     const saved = localStorage.getItem(KEY);
@@ -580,7 +636,7 @@
     $("previewNotifBtn").textContent = "Vista previa lista · " + count + " destinatarios en la demo";
   });
 
-  load();
+  if (sessionStorage.getItem(AUTH_KEY) === "1") { showApp(); load(); } else { showLogin(); }
 })();
 </script>
 </body>

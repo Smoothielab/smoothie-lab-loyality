@@ -61,4 +61,9 @@ const SMOOTHIE_CONFIG = {
 };
 
 // Hace la configuración disponible en el navegador y en Node (para pruebas).
+// IMPORTANTE: un `const` de nivel superior NO crea una propiedad en `window`,
+// por eso hay que asignarlo explícito: index.html y admin/index.html leen
+// window.SMOOTHIE_CONFIG. Sin esta línea, CFG es undefined y todo el JS de
+// ambas páginas se rompe al arrancar (el QR no se genera y el registro no hace nada).
+if (typeof window !== "undefined") window.SMOOTHIE_CONFIG = SMOOTHIE_CONFIG;
 if (typeof module !== "undefined" && module.exports) module.exports = SMOOTHIE_CONFIG;
