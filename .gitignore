@@ -1,0 +1,10 @@
+# Dependencias de Node (se instalan con `npm install` en server/)
+node_modules/
+# Secretos del servidor (ver server/.env.example)
+server/.env
+server/certs/
+# Caché de Python
+__pycache__/
+*.pyc
+# Archivos del sistema
+.DS_Store
