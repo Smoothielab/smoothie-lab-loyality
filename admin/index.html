@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="../config.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
   :root{--black:#000; --green:#111111; --green-light:#2b2b2b; --gold:#ffffff; --cream:#000000; --line:#2a2a2a; --muted:#b8b8b8}
   *{box-sizing:border-box; margin:0; padding:0}
@@ -59,6 +60,8 @@
   .pill-gold{background:#ffffff; color:#000000}
   .pill-green{background:#1c1c1c; color:#ffffff; border:1px solid #3a3a3a}
   .search{margin-bottom:12px}
+  #qr-reader{width:100%; max-width:340px; margin:0 auto; border-radius:12px; overflow:hidden; background:#000}
+  #qr-reader video{width:100% !important}
   .cashier-result{margin-top:16px; display:none}
   .cashier-result.show{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start}
   .mini-pass{background:linear-gradient(150deg,#1c1c1c,#111111 55%,#000000); border-radius:16px; color:#fff; padding:18px}
@@ -123,13 +126,19 @@
   <div class="grid">
     <div class="card">
       <h2>Modo cajero</h2>
-      <p class="hint">Escribe el ID del cliente (ej. <b>SL-0001</b>) o su nombre. En el mostrador, el cajero escanea el QR de la tarjeta y el ID llega solo a este campo.</p>
+      <p class="hint">Escribe el ID del cliente (ej. <b>SL-0001</b>) o su nombre, o escanea su QR con la cámara: el sello se suma solo.</p>
       <div class="field">
         <label for="cashierInput">ID o nombre del cliente</label>
         <input id="cashierInput" type="text" placeholder="Ej. SL-0001 o Mariana Torres" autocomplete="off">
       </div>
       <button class="btn btn-gold" id="stampBtn">Sumar 1 sello</button>
       <button class="btn btn-green" id="redeemBtn" style="display:none">Canjear smoothie gratis</button>
+      <button class="btn btn-dark" id="scanBtn" style="margin-top:10px">Escanear QR con cámara</button>
+      <div id="qrScannerBox" style="display:none;margin-top:14px">
+        <div id="qr-reader"></div>
+        <p id="scanStatus" style="margin-top:10px;font-size:.88rem;font-weight:700"></p>
+      </div>
+      <p id="scanError" style="margin-top:10px;font-size:.88rem;color:#ffb3b3"></p>
       <p id="cashierMsg" style="margin-top:10px;font-weight:700;font-size:.9rem"></p>
       <div class="cashier-result" id="cashierResult">
         <div class="mini-pass">
@@ -140,7 +149,14 @@
           <div style="font-size:.78rem;opacity:.75;margin-top:4px" id="miniStatus"></div>
         </div>
         <div>
-          <p style="font-size:.85rem;font-weight:700;margin-bottom:8px">Notificación que recibiría el cliente:</p>
+          <div class="field">
+            <label for="visitMsg">Mensaje de la visita (editable antes de enviar)</label>
+            <textarea id="visitMsg" maxlength="180"></textarea>
+            <p style="font-size:.78rem;color:var(--muted);margin-top:4px">Puedes usar {nombre}, {sellos} y {faltan}. Edítalo y luego pulsa «Enviar notificación».</p>
+          </div>
+          <button class="btn btn-dark" id="sendVisitBtn">Enviar notificación</button>
+          <p id="visitSentMsg" style="margin-top:8px;font-size:.85rem;font-weight:700"></p>
+          <p style="font-size:.85rem;font-weight:700;margin:14px 0 8px">Notificación que recibiría el cliente:</p>
           <div class="phone"><div class="phone-screen">
             <div class="phone-time" id="cashierLockTime">--:--</div>
             <div class="lock-notif"><img src="../assets/pass/images/icon@2x.png" alt=""><div style="flex:1">
@@ -192,13 +208,62 @@
     </div>
   </div>
 
+  <div class="grid">
+    <div class="card">
+      <h2>Cumpleaños</h2>
+      <p class="hint">Cumpleaños de hoy y de los próximos 7 días. La fecha de nacimiento se pide al registrarse en la tarjeta.</p>
+      <ul class="top-list" id="birthdayList"></ul>
+    </div>
+    <div class="card">
+      <h2>Promo de cumpleaños</h2>
+      <p class="hint">Elige a quién y escribe la promoción. En la demo solo se muestra la vista previa: <b>no se envía nada real</b>.</p>
+      <div class="field">
+        <label for="bdaySelect">Cumpleañero</label>
+        <select id="bdaySelect"></select>
+      </div>
+      <div class="field">
+        <label for="bdayMsg">Mensaje de la promoción (editable)</label>
+        <textarea id="bdayMsg" maxlength="180"></textarea>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:4px">Se llena con la plantilla de cumpleaños de «Plantillas de mensajes». Puedes usar {nombre}.</p>
+      </div>
+      <button class="btn btn-dark" id="previewBdayBtn">Ver vista previa</button>
+      <div id="bdayPreview" style="display:none;margin-top:16px">
+        <div class="phone"><div class="phone-screen">
+          <div class="phone-time" id="bdayLockTime">--:--</div>
+          <div class="lock-notif"><img src="../assets/pass/images/icon@2x.png" alt=""><div style="flex:1">
+            <div><span class="app">SMOOTHIE LAB</span></div>
+            <div class="msg" id="bdayPrevBody"></div>
+          </div></div>
+          <p style="color:rgba(255,255,255,.5);font-size:.75rem;text-align:center;margin-top:16px">Demo: no se envió nada real. En producción, la promoción llega al wallet del cumpleañero.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px">
+    <h2>Plantillas de mensajes</h2>
+    <p class="hint">Se usan en el Modo cajero (visita) y en la promo de cumpleaños. Variables disponibles: {nombre} = primer nombre del cliente, {sellos} = sellos que lleva, {faltan} = sellos que le faltan para el premio. Se guardan en este navegador.</p>
+    <div class="grid" style="margin-bottom:0">
+      <div class="field">
+        <label for="tplVisit">Plantilla de visita</label>
+        <textarea id="tplVisit" maxlength="180"></textarea>
+      </div>
+      <div class="field">
+        <label for="tplBirthday">Plantilla de cumpleaños</label>
+        <textarea id="tplBirthday" maxlength="180"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-dark" id="saveTplBtn">Guardar plantillas</button>
+    <span id="tplSavedMsg" style="margin-left:10px;font-size:.88rem;font-weight:700"></span>
+  </div>
+
   <div class="card">
     <h2>Miembros</h2>
     <p class="hint">Busca por nombre, ID o celular.</p>
     <div class="field search"><input id="searchInput" type="text" placeholder="Buscar miembro…"></div>
     <div style="overflow-x:auto">
     <table>
-      <thead><tr><th>ID</th><th>NOMBRE</th><th>CELULAR</th><th>SELLOS</th><th>VISITAS</th><th>CANJES</th><th>ÚLTIMA VISITA</th><th>ESTADO</th></tr></thead>
+      <thead><tr><th>ID</th><th>NOMBRE</th><th>CELULAR</th><th>CUMPLEAÑOS</th><th>SELLOS</th><th>VISITAS</th><th>CANJES</th><th>ÚLTIMA VISITA</th><th>ESTADO</th></tr></thead>
       <tbody id="membersBody"></tbody>
     </table>
     </div>
@@ -217,18 +282,47 @@
   const CFG = window.SMOOTHIE_CONFIG;
   const TOTAL = CFG.stampsForReward;
   const KEY = "smoothieLabAdminMembers";
+  const TPL_KEY = "smoothieLabTemplates";
+  const DEFAULT_TEMPLATES = {
+    visit: "¡Gracias, {nombre}! Llevas {sellos} de 8 sellos. Te faltan {faltan} para tu smoothie gratis.",
+    birthday: "¡Feliz cumpleaños, {nombre}! Hoy tu smoothie va por nuestra cuenta 🎂"
+  };
+  let templates = loadTemplates();
   let data = null;
   let current = null;
+
+  function loadTemplates() {
+    try {
+      const t = JSON.parse(localStorage.getItem(TPL_KEY) || "null");
+      if (t && t.visit && t.birthday) return t;
+    } catch (e) {}
+    return { ...DEFAULT_TEMPLATES };
+  }
+  function saveTemplates() { localStorage.setItem(TPL_KEY, JSON.stringify(templates)); }
+  function renderTemplate(tpl, vars) {
+    return (tpl || "").replace(/\{(\w+)\}/g, (_, k) => vars[k] !== undefined ? vars[k] : "{" + k + "}");
+  }
+  function firstName(name) { return (name || "").split(" ")[0]; }
+  function fmtBirthdate(birthdate) {
+    if (!birthdate) return "—";
+    const p = birthdate.split("-");
+    if (p.length !== 3) return "—";
+    const d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return d.toLocaleDateString("es-MX", { day: "numeric", month: "short" });
+  }
+  function fmtDayMonth(date) {
+    return date.toLocaleDateString("es-MX", { day: "numeric", month: "short" });
+  }
 
   const $ = (id) => document.getElementById(id);
 
   function load() {
     const saved = localStorage.getItem(KEY);
-    if (saved) { data = JSON.parse(saved); return; }
+    if (saved) { data = JSON.parse(saved); renderAll(); return; }
     fetch("../data/demo-members.json")
       .then(r => r.json())
       .then(json => { data = json; save(); renderAll(); })
-      .catch(() => { $("membersBody").innerHTML = "<tr><td colspan='8'>No se pudo cargar data/demo-members.json. Abre el sitio con un servidor local (python3 -m http.server).</td></tr>"; });
+      .catch(() => { $("membersBody").innerHTML = "<tr><td colspan='9'>No se pudo cargar data/demo-members.json. Abre el sitio con un servidor local (python3 -m http.server).</td></tr>"; });
   }
   function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
 
@@ -267,13 +361,13 @@
       const status = m.stamps >= TOTAL
         ? '<span class="pill pill-gold">Premio listo</span>'
         : (m.stamps >= TOTAL - 1 ? '<span class="pill pill-green">A 1 sello</span>' : '<span class="pill pill-green">Activo</span>');
-      return "<tr><td><b>" + m.id + "</b></td><td>" + m.name + "</td><td>" + m.phone + "</td>" +
+      return "<tr><td><b>" + m.id + "</b></td><td>" + m.name + "</td><td>" + m.phone + "</td><td>" + fmtBirthdate(m.birthdate) + "</td>" +
         "<td><b>" + m.stamps + " / " + TOTAL + "</b></td><td>" + m.visits + "</td><td>" + m.redeemed +
         "</td><td>" + m.lastVisit + "</td><td>" + status + "</td></tr>";
-    }).join("") || "<tr><td colspan='8'>Sin resultados.</td></tr>";
+    }).join("") || "<tr><td colspan='9'>Sin resultados.</td></tr>";
   }
 
-  function renderAll() { renderStats(); renderBars(); renderTop(); renderTable($("searchInput").value); }
+  function renderAll() { renderStats(); renderBars(); renderTop(); renderTable($("searchInput").value); renderBirthdays(); }
 
   function findMember(q) {
     q = (q || "").trim().toLowerCase();
@@ -281,6 +375,51 @@
     return data.members.find(m => m.id.toLowerCase() === q)
       || data.members.find(m => m.name.toLowerCase().includes(q))
       || null;
+  }
+
+  function nextBirthday(m) {
+    if (!m.birthdate) return null;
+    const p = m.birthdate.split("-");
+    if (p.length !== 3) return null;
+    const mo = +p[1], d = +p[2];
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const mk = (y) => {
+      let dt = new Date(y, mo - 1, d);
+      if (mo === 2 && d === 29 && dt.getMonth() !== 1) dt = new Date(y, 1, 28);
+      return dt;
+    };
+    let next = mk(today.getFullYear());
+    if (next < today) next = mk(today.getFullYear() + 1);
+    return { date: next, days: Math.round((next - today) / 86400000) };
+  }
+
+  function upcomingBirthdays() {
+    return data.members
+      .map(m => ({ m, nb: nextBirthday(m) }))
+      .filter(x => x.nb && x.nb.days <= 7)
+      .sort((a, b) => a.nb.days - b.nb.days);
+  }
+
+  function renderBirthdays() {
+    const list = upcomingBirthdays();
+    $("birthdayList").innerHTML = list.length
+      ? list.map(x => "<li><span><b>" + x.m.name + "</b> · " + fmtDayMonth(x.nb.date) + "</span><b>" +
+          (x.nb.days === 0 ? "¡Hoy!" : "en " + x.nb.days + (x.nb.days === 1 ? " día" : " días")) + "</b></li>").join("")
+      : "<li><span>No hay cumpleaños en los próximos 7 días.</span></li>";
+    const sel = $("bdaySelect");
+    const prev = sel.value;
+    sel.innerHTML = list.length
+      ? list.map(x => '<option value="' + x.m.id + '">' + x.m.name + " — " + fmtDayMonth(x.nb.date) + (x.nb.days === 0 ? " (hoy)" : "") + "</option>").join("")
+      : "<option value=''>Sin cumpleaños próximos</option>";
+    if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+    fillBdayMsg();
+  }
+
+  function fillBdayMsg() {
+    const m = data.members.find(x => x.id === $("bdaySelect").value);
+    $("bdayMsg").value = m
+      ? renderTemplate(templates.birthday, { nombre: firstName(m.name) })
+      : templates.birthday;
   }
 
   function showCashier(m, notifText) {
@@ -295,12 +434,14 @@
       ? "¡Premio listo! Puede canjear su smoothie gratis."
       : "Le faltan " + (TOTAL - m.stamps) + " sellos para su smoothie gratis.";
     $("cashierNotif").textContent = notifText;
+    $("visitMsg").value = notifText;
+    $("visitSentMsg").textContent = "";
     $("cashierLockTime").textContent = new Date().toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"});
     $("cashierResult").classList.add("show");
     $("redeemBtn").style.display = m.stamps >= TOTAL ? "inline-block" : "none";
   }
 
-  $("stampBtn").addEventListener("click", () => {
+  function stampMember() {
     const m = findMember($("cashierInput").value);
     if (!m) { $("cashierMsg").textContent = "No encontré a ese miembro. Revisa el ID o el nombre."; return; }
     if (m.stamps >= TOTAL) {
@@ -314,10 +455,12 @@
     save(); renderAll();
     const text = m.stamps >= TOTAL
       ? CFG.notifications.rewardReady
-      : CFG.notifications.stampEarned(m.stamps, TOTAL);
+      : renderTemplate(templates.visit, { nombre: firstName(m.name), sellos: m.stamps, faltan: TOTAL - m.stamps });
     $("cashierMsg").textContent = "Sello sumado a " + m.name + " (" + m.stamps + " de " + TOTAL + ").";
     showCashier(m, text);
-  });
+  }
+
+  $("stampBtn").addEventListener("click", stampMember);
 
   $("redeemBtn").addEventListener("click", () => {
     if (!current) return;
@@ -327,6 +470,100 @@
     $("cashierMsg").textContent = "Smoothie gratis canjeado para " + current.name + ". Sellos en cero, a empezar de nuevo.";
     showCashier(current, "¡Gracias por venir! Tu smoothie gratis está en camino. Vuelve pronto por tu siguiente sello.");
     $("redeemBtn").style.display = "none";
+  });
+
+  // --- Escáner QR con cámara (html5-qrcode) ---
+  let qrScanner = null;
+  let scanning = false;
+
+  function stopScanner() {
+    if (qrScanner) {
+      const q = qrScanner;
+      qrScanner = null;
+      q.stop().then(() => q.clear()).catch(() => {});
+    }
+    scanning = false;
+    $("scanBtn").textContent = "Escanear QR con cámara";
+    $("qrScannerBox").style.display = "none";
+    $("scanStatus").textContent = "";
+  }
+
+  async function startScanner() {
+    if (scanning) { stopScanner(); return; }
+    if (typeof Html5Qrcode === "undefined") {
+      $("scanError").textContent = "No se pudo cargar la librería del escáner (revisa tu conexión). Puedes escribir el ID a mano.";
+      return;
+    }
+    $("scanError").textContent = "";
+    $("scanStatus").textContent = "Abriendo cámara…";
+    $("qrScannerBox").style.display = "block";
+    try {
+      qrScanner = new Html5Qrcode("qr-reader");
+      await qrScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          const match = decodedText.match(/SL-\d{4}/i);
+          if (!match) {
+            $("scanStatus").textContent = "Ese QR no es de una tarjeta del Club. Sigue apuntando al QR del cliente…";
+            return;
+          }
+          stopScanner();
+          $("cashierInput").value = match[0].toUpperCase();
+          stampMember();
+        },
+        () => {}
+      );
+      scanning = true;
+      $("scanBtn").textContent = "Detener cámara";
+      $("scanStatus").textContent = "Apunta la cámara al QR de la tarjeta del cliente…";
+    } catch (err) {
+      $("qrScannerBox").style.display = "none";
+      $("scanStatus").textContent = "";
+      const name = err && err.name ? err.name : "";
+      let msg = "No se pudo abrir la cámara.";
+      if (name === "NotAllowedError") msg += " Revisa el permiso de cámara del navegador.";
+      else if (name === "NotFoundError") msg += " No se encontró ninguna cámara en este dispositivo.";
+      else msg += " La cámara necesita una conexión segura (HTTPS) o abrir el sitio en localhost.";
+      $("scanError").textContent = msg + " Puedes escribir el ID a mano.";
+    }
+  }
+
+  $("scanBtn").addEventListener("click", startScanner);
+
+  // --- Mensaje de visita: editable antes de enviar ---
+  $("visitMsg").addEventListener("input", () => { $("cashierNotif").textContent = $("visitMsg").value; });
+  $("sendVisitBtn").addEventListener("click", () => {
+    const text = $("visitMsg").value.trim();
+    if (!text) { $("visitSentMsg").textContent = "Escribe el mensaje antes de enviar."; return; }
+    $("cashierNotif").textContent = text;
+    $("cashierLockTime").textContent = new Date().toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"});
+    $("visitSentMsg").textContent = "✓ Listo para enviar (demo: no se envió nada real). En producción, este mensaje llegaría al wallet del cliente.";
+  });
+
+  // --- Promo de cumpleaños ---
+  $("bdaySelect").addEventListener("change", fillBdayMsg);
+  $("previewBdayBtn").addEventListener("click", () => {
+    const text = $("bdayMsg").value.trim();
+    if (!text) return;
+    $("bdayPrevBody").textContent = text;
+    $("bdayLockTime").textContent = new Date().toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"});
+    $("bdayPreview").style.display = "block";
+  });
+
+  // --- Plantillas de mensajes ---
+  $("tplVisit").value = templates.visit;
+  $("tplBirthday").value = templates.birthday;
+  $("saveTplBtn").addEventListener("click", () => {
+    templates = {
+      visit: $("tplVisit").value.trim() || DEFAULT_TEMPLATES.visit,
+      birthday: $("tplBirthday").value.trim() || DEFAULT_TEMPLATES.birthday
+    };
+    saveTemplates();
+    $("tplVisit").value = templates.visit;
+    $("tplBirthday").value = templates.birthday;
+    $("tplSavedMsg").textContent = "✓ Plantillas guardadas.";
+    fillBdayMsg();
   });
 
   $("searchInput").addEventListener("input", (e) => renderTable(e.target.value));

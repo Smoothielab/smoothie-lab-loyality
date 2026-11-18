@@ -51,11 +51,10 @@ activa.
 
 ### En esta demo
 
-La landing tiene una sección "¿Estoy cerca de Smoothie Lab?" que usa el GPS
-de tu navegador y calcula la distancia con la fórmula haversine. Si estás a
-menos de 200 m, te muestra cómo se vería la notificación en la pantalla de
-bloqueo. Tu ubicación no se envía a ningún servidor: el cálculo se hace en tu
-propio navegador.
+La geocerca es solo interna: vive en el pase (`locations` + `maxDistance` en
+`assets/pass/pass.json`) y la landing no muestra nada de ubicación al cliente.
+En producción, el sistema operativo avisa solo cuando el cliente está cerca de
+la tienda; en la demo no hay simulación de cercanía en la landing.
 
 ## Cómo funcionan las notificaciones push
 

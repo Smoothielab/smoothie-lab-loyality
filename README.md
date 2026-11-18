@@ -18,7 +18,7 @@ tienda.
 
 ```
 smoothie-lab-loyalty/
-├── index.html                  Landing del cliente (registro, QR, tarjeta, geolocalización)
+├── index.html                  Landing del cliente (registro, QR, tarjeta)
 ├── config.js                   TODAS las reglas configurables en un solo lugar
 ├── admin/
 │   └── index.html              Panel del negocio (reportes, modo cajero, notificaciones)
@@ -71,14 +71,18 @@ política CORS de los navegadores).
 3. **Botones de wallet:** "Añadir a Apple Wallet" descarga el `pass.json` de
    ejemplo; "Añadir a Google Wallet" muestra el enlace JWT de ejemplo. Ambos
    explican qué falta para el pase real.
-4. **Geolocalización:** "Verificar mi ubicación" calcula tu distancia a Plaza
-   Luna. Si estás a menos de 200 m, simula la notificación de pantalla de
-   bloqueo.
+4. **Geolocalización (interna):** la geocerca de 200 m vive solo en el pase
+   (`locations` + `maxDistance` en `assets/pass/pass.json`); la landing ya no
+   muestra nada de ubicación al cliente.
 5. **Panel admin:** revisa las estadísticas, la gráfica de visitas, el top de
    clientes y la tabla de miembros con buscador.
-6. **Modo cajero:** escribe `SL-0001` y suma 1 sello: verás la tarjeta
-   actualizada y la notificación push que recibiría el cliente. Si llega a 8
-   sellos, aparece "Canjear smoothie gratis".
+6. **Modo cajero:** escribe `SL-0001` (o escanea su QR con la cámara) y suma 1
+   sello: verás la tarjeta actualizada y el mensaje de la visita, editable
+   antes de enviar. Si llega a 8 sellos, aparece "Canjear smoothie gratis".
+   **Cumpleaños:** el panel muestra los cumpleaños de hoy y de los próximos 7
+   días (Mariana Torres cumple hoy, 18 nov) y la promo editable.
+   **Plantillas:** edita los mensajes de visita y de cumpleaños; se guardan en
+   el navegador.
 7. **Enviar notificación:** escribe título y mensaje y mira la vista previa en
    el mockup de teléfono, con la explicación del flujo real en Apple y Google.
 
