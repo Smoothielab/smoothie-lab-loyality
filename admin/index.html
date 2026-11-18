@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel del negocio — Club Smoothie Lab</title>
+<meta name="description" content="Panel de administración del programa de lealtad Club Smoothie Lab: miembros, sellos, canjes, reportes y notificaciones.">
+<link rel="icon" href="../assets/pass/images/icon@2x.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<style>
+  :root{--black:#111; --green:#0B3D2E; --green-light:#1E6B4F; --gold:#E8A93D; --cream:#FAF6EF; --line:#e8e2d5; --muted:#5b6b62}
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Montserrat',system-ui,sans-serif; background:var(--cream); color:var(--black); line-height:1.5}
+  a{color:var(--green-light)}
+  header{background:var(--green); color:#fff; padding:14px 0}
+  header .wrap{display:flex; align-items:center; gap:12px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.06em}
+  .brand img{width:32px; height:32px}
+  .brand small{display:block; font-weight:600; font-size:.66rem; letter-spacing:.14em; color:var(--gold)}
+  header nav a{color:#fff; text-decoration:none; font-weight:600; font-size:.88rem; margin-left:16px}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 20px}
+  main{padding:28px 0 60px}
+  h1{font-size:1.6rem; font-weight:900}
+  .sub{color:var(--muted); margin:4px 0 22px}
+  .demo-badge{display:inline-block; background:#FFF7E0; border:1px solid #f0d48a; color:#6b4d00; border-radius:99px; padding:4px 12px; font-size:.78rem; font-weight:700; margin-left:10px; vertical-align:middle}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px}
+  .stat{background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px}
+  .stat .v{font-size:1.9rem; font-weight:900; color:var(--green)}
+  .stat .l{font-size:.78rem; font-weight:700; letter-spacing:.08em; color:var(--muted)}
+  .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:18px; margin-bottom:22px}
+  .card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px}
+  .card h2{font-size:1.05rem; font-weight:800; margin-bottom:4px}
+  .card .hint{font-size:.85rem; color:var(--muted); margin-bottom:14px}
+  .bars{display:flex; align-items:flex-end; gap:10px; height:150px; padding-top:10px}
+  .bar-wrap{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end}
+  .bar{width:100%; max-width:44px; background:linear-gradient(180deg, var(--gold), var(--green-light)); border-radius:6px 6px 0 0}
+  .bar-v{font-size:.8rem; font-weight:800}
+  .bar-d{font-size:.72rem; color:var(--muted)}
+  .top-list{list-style:none}
+  .top-list li{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:.92rem}
+  .top-list li:last-child{border-bottom:none}
+  .top-list b{color:var(--green)}
+  .field{margin-bottom:10px}
+  .field label{display:block; font-weight:700; font-size:.8rem; margin-bottom:4px}
+  .field input, .field textarea, .field select{width:100%; padding:11px 12px; border:1.5px solid #d8d2c2; border-radius:10px; font-family:inherit; font-size:.95rem}
+  .field textarea{min-height:74px; resize:vertical}
+  .btn{display:inline-block; padding:11px 18px; border-radius:999px; font-weight:700; font-size:.9rem; border:2px solid transparent; cursor:pointer; font-family:inherit; text-decoration:none}
+  .btn-gold{background:var(--gold); color:var(--black)}
+  .btn-dark{background:var(--black); color:#fff}
+  .btn-green{background:var(--green); color:#fff}
+  .btn:disabled{opacity:.45; cursor:not-allowed}
+  table{width:100%; border-collapse:collapse; font-size:.9rem}
+  th{text-align:left; font-size:.72rem; letter-spacing:.1em; color:var(--muted); padding:8px 10px; border-bottom:2px solid var(--line)}
+  td{padding:9px 10px; border-bottom:1px solid var(--line)}
+  tr:hover td{background:#fdfbf6}
+  .pill{display:inline-block; padding:2px 9px; border-radius:99px; font-size:.75rem; font-weight:700}
+  .pill-gold{background:#FFF1CC; color:#6b4d00}
+  .pill-green{background:#DFF0E7; color:var(--green)}
+  .search{margin-bottom:12px}
+  .cashier-result{margin-top:16px; display:none}
+  .cashier-result.show{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start}
+  .mini-pass{background:linear-gradient(150deg,#0d4a37,var(--green) 55%,#083626); border-radius:16px; color:#fff; padding:18px}
+  .mini-pass .big{font-size:1.9rem; font-weight:900}
+  .mini-pass .big small{font-size:.9rem; color:var(--gold)}
+  .dots{display:flex; gap:6px; margin:10px 0}
+  .dot{width:22px; height:22px; border-radius:50%; border:2px dashed rgba(255,255,255,.4); display:flex; align-items:center; justify-content:center; font-size:.7rem}
+  .dot.on{background:var(--gold); border-color:var(--gold); color:#111}
+  .phone{width:240px; margin:0 auto; background:#1c1c1e; border-radius:30px; padding:9px; border:3px solid #3a3a3c}
+  .phone-screen{background:#000; border-radius:22px; min-height:260px; padding:14px 10px}
+  .phone-time{text-align:center; color:#fff; font-weight:700; font-size:.75rem; opacity:.8}
+  .lock-notif{margin-top:22px; background:rgba(255,255,255,.16); border-radius:14px; padding:11px; display:flex; gap:9px}
+  .lock-notif img{width:32px; height:32px; border-radius:8px; background:var(--green); padding:3px}
+  .lock-notif .app{font-size:.7rem; font-weight:700; color:#fff}
+  .lock-notif .msg{font-size:.83rem; color:#fff; margin-top:2px}
+  .lock-notif .title{font-size:.83rem; font-weight:700; color:#fff; margin-top:2px}
+  .flow-note{margin-top:14px; background:#F2F7F4; border:1px solid #cfe3d8; border-radius:12px; padding:12px 14px; font-size:.84rem; color:#234636}
+  .flow-note b{color:var(--green)}
+  footer{background:var(--green); color:#fff; padding:22px 0; font-size:.86rem}
+  footer a{color:var(--gold)}
+  @media (max-width:820px){ .stats{grid-template-columns:1fr 1fr} .grid{grid-template-columns:1fr} .cashier-result.show{grid-template-columns:1fr} header nav{display:none} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <img src="../assets/pass/images/icon@2x.png" alt="">
+      <div>SMOOTHIE LAB<small>PANEL DEL NEGOCIO</small></div>
+    </div>
+    <nav>
+      <a href="../index.html">← Ver la tarjeta del cliente</a>
+      <a href="../docs/COMO-FUNCIONA.md">Cómo funciona</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Club Smoothie Lab <span class="demo-badge">DEMO · datos de ejemplo</span></h1>
+  <p class="sub">Panel del negocio. Los datos de ejemplo viven en <code>data/demo-members.json</code> y tus cambios se guardan en este navegador (localStorage). En producción, todo vive en el servidor.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="statCards">–</div><div class="l">TARJETAS ACTIVAS</div></div>
+    <div class="stat"><div class="v" id="statStamps">–</div><div class="l">SELLOS DEL MES</div></div>
+    <div class="stat"><div class="v" id="statRedeemed">–</div><div class="l">SMOOTHIES CANJEADOS</div></div>
+    <div class="stat"><div class="v" id="statVisits">–</div><div class="l">VISITAS (7 DÍAS)</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Visitas por día</h2>
+      <p class="hint">Últimos 7 días con registro de visitas.</p>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="card">
+      <h2>Top clientes</h2>
+      <p class="hint">Por número de visitas acumuladas.</p>
+      <ol class="top-list" id="topList"></ol>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Modo cajero</h2>
+      <p class="hint">Escribe el ID del cliente (ej. <b>SL-0001</b>) o su nombre. En el mostrador, el cajero escanea el QR de la tarjeta y el ID llega solo a este campo.</p>
+      <div class="field">
+        <label for="cashierInput">ID o nombre del cliente</label>
+        <input id="cashierInput" type="text" placeholder="Ej. SL-0001 o Mariana Torres" autocomplete="off">
+      </div>
+      <button class="btn btn-gold" id="stampBtn">Sumar 1 sello</button>
+      <button class="btn btn-green" id="redeemBtn" style="display:none">Canjear smoothie gratis</button>
+      <p id="cashierMsg" style="margin-top:10px;font-weight:700;font-size:.9rem"></p>
+      <div class="cashier-result" id="cashierResult">
+        <div class="mini-pass">
+          <div style="font-size:.72rem;letter-spacing:.14em;color:var(--gold);font-weight:700">CLUB SMOOTHIE LAB</div>
+          <div class="big"><span id="miniStamps">0</span> <small>de 8 sellos</small></div>
+          <div class="dots" id="miniDots"></div>
+          <div style="font-size:.85rem"><b id="miniName">—</b> · <span id="miniId">—</span></div>
+          <div style="font-size:.78rem;opacity:.75;margin-top:4px" id="miniStatus"></div>
+        </div>
+        <div>
+          <p style="font-size:.85rem;font-weight:700;margin-bottom:8px">Notificación que recibiría el cliente:</p>
+          <div class="phone"><div class="phone-screen">
+            <div class="phone-time" id="cashierLockTime">--:--</div>
+            <div class="lock-notif"><img src="../assets/pass/images/icon@2x.png" alt=""><div style="flex:1">
+              <div><span class="app">WALLET</span></div>
+              <div class="msg" id="cashierNotif">—</div>
+            </div></div>
+            <p style="color:rgba(255,255,255,.5);font-size:.75rem;text-align:center;margin-top:16px">En producción, esta notificación la envía el servidor al actualizar el pase.</p>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Enviar notificación</h2>
+      <p class="hint">Aviso a tus clientes. En la demo solo se muestra la vista previa: <b>no se envía nada real</b>.</p>
+      <div class="field">
+        <label for="notifTarget">Destinatarios</label>
+        <select id="notifTarget">
+          <option value="all">Todos los miembros activos</option>
+          <option value="almost">Solo los que están a 1 sello del premio</option>
+          <option value="inactive">Solo los que no vienen desde hace 7 días</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="notifTitle">Título</label>
+        <input id="notifTitle" type="text" value="Martes de 2x1 en smoothies" maxlength="60">
+      </div>
+      <div class="field">
+        <label for="notifBody">Mensaje</label>
+        <textarea id="notifBody" maxlength="180">Hoy todos los smoothies al 2x1 solo para miembros del Club. Muestra tu tarjeta en caja.</textarea>
+      </div>
+      <button class="btn btn-dark" id="previewNotifBtn">Ver vista previa</button>
+      <div id="notifPreview" style="display:none;margin-top:16px">
+        <div class="phone"><div class="phone-screen">
+          <div class="phone-time" id="notifLockTime">--:--</div>
+          <div class="lock-notif"><img src="../assets/pass/images/icon@2x.png" alt=""><div style="flex:1">
+            <div><span class="app">SMOOTHIE LAB</span></div>
+            <div class="title" id="notifPrevTitle"></div>
+            <div class="msg" id="notifPrevBody"></div>
+          </div></div>
+        </div></div>
+        <div class="flow-note">
+          <b>Cómo se envía en producción:</b><br>
+          • <b>Apple Wallet:</b> el servidor manda un push APNs vacío al dispositivo registrado y el iPhone descarga el pase actualizado; el texto que ve el cliente sale del campo <code>changeMessage</code> del pase.<br>
+          • <b>Google Wallet:</b> se actualiza el objeto con un mensaje <code>TEXT_AND_NOTIFY</code>. Límite de Google: <b>máximo 3 mensajes por pase cada 24 h</b>, y Google decide el texto de las notificaciones de cercanía.<br>
+          • Las notificaciones de cercanía (200 m) son automáticas y no cuentan como mensajes: las dispara el sistema operativo cuando el cliente pasa cerca de Plaza Luna.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Miembros</h2>
+    <p class="hint">Busca por nombre, ID o celular.</p>
+    <div class="field search"><input id="searchInput" type="text" placeholder="Buscar miembro…"></div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>ID</th><th>NOMBRE</th><th>CELULAR</th><th>SELLOS</th><th>VISITAS</th><th>CANJES</th><th>ÚLTIMA VISITA</th><th>ESTADO</th></tr></thead>
+      <tbody id="membersBody"></tbody>
+    </table>
+    </div>
+    <p style="margin-top:12px;font-size:.85rem;color:var(--muted)"><a href="../data/demo-members.json">Ver el archivo de datos de ejemplo (JSON)</a> · En producción aquí se exportan los datos para migrar desde WonCards.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>Smoothie Lab</b> · Panel del negocio — Club Smoothie Lab · <a href="../index.html">Ver la tarjeta del cliente</a> · <a href="../docs/PRODUCCION.md">Checklist de producción</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const CFG = window.SMOOTHIE_CONFIG;
+  const TOTAL = CFG.stampsForReward;
+  const KEY = "smoothieLabAdminMembers";
+  let data = null;
+  let current = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function load() {
+    const saved = localStorage.getItem(KEY);
+    if (saved) { data = JSON.parse(saved); return; }
+    fetch("../data/demo-members.json")
+      .then(r => r.json())
+      .then(json => { data = json; save(); renderAll(); })
+      .catch(() => { $("membersBody").innerHTML = "<tr><td colspan='8'>No se pudo cargar data/demo-members.json. Abre el sitio con un servidor local (python3 -m http.server).</td></tr>"; });
+  }
+  function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+  function renderStats() {
+    const members = data.members;
+    $("statCards").textContent = members.length;
+    $("statStamps").textContent = members.reduce((a, m) => a + m.stamps, 0);
+    $("statRedeemed").textContent = members.reduce((a, m) => a + m.redeemed, 0);
+    $("statVisits").textContent = data.visitsByDay.reduce((a, d) => a + d.visits, 0);
+  }
+
+  function renderBars() {
+    const max = Math.max(...data.visitsByDay.map(d => d.visits));
+    $("bars").innerHTML = data.visitsByDay.map(d => {
+      const h = Math.round(d.visits / max * 100);
+      const label = d.date.slice(5);
+      return '<div class="bar-wrap"><div class="bar-v">' + d.visits + '</div>' +
+        '<div class="bar" style="height:' + h + '%"></div>' +
+        '<div class="bar-d">' + label + '</div></div>';
+    }).join("");
+  }
+
+  function renderTop() {
+    const top = [...data.members].sort((a, b) => b.visits - a.visits).slice(0, 5);
+    $("topList").innerHTML = top.map((m, i) =>
+      "<li><span>" + (i + 1) + ". " + m.name + "</span><b>" + m.visits + " visitas · " + m.stamps + " sellos</b></li>"
+    ).join("");
+  }
+
+  function renderTable(filter) {
+    const q = (filter || "").toLowerCase();
+    const rows = data.members.filter(m =>
+      !q || m.name.toLowerCase().includes(q) || m.id.toLowerCase().includes(q) || m.phone.includes(q)
+    );
+    $("membersBody").innerHTML = rows.map(m => {
+      const status = m.stamps >= TOTAL
+        ? '<span class="pill pill-gold">Premio listo</span>'
+        : (m.stamps >= TOTAL - 1 ? '<span class="pill pill-green">A 1 sello</span>' : '<span class="pill pill-green">Activo</span>');
+      return "<tr><td><b>" + m.id + "</b></td><td>" + m.name + "</td><td>" + m.phone + "</td>" +
+        "<td><b>" + m.stamps + " / " + TOTAL + "</b></td><td>" + m.visits + "</td><td>" + m.redeemed +
+        "</td><td>" + m.lastVisit + "</td><td>" + status + "</td></tr>";
+    }).join("") || "<tr><td colspan='8'>Sin resultados.</td></tr>";
+  }
+
+  function renderAll() { renderStats(); renderBars(); renderTop(); renderTable($("searchInput").value); }
+
+  function findMember(q) {
+    q = (q || "").trim().toLowerCase();
+    if (!q) return null;
+    return data.members.find(m => m.id.toLowerCase() === q)
+      || data.members.find(m => m.name.toLowerCase().includes(q))
+      || null;
+  }
+
+  function showCashier(m, notifText) {
+    current = m;
+    $("miniStamps").textContent = m.stamps;
+    $("miniName").textContent = m.name;
+    $("miniId").textContent = m.id;
+    $("miniDots").innerHTML = Array.from({length: TOTAL}, (_, i) =>
+      '<div class="dot' + (i < m.stamps ? " on" : "") + '">' + (i < m.stamps ? "✓" : "") + "</div>"
+    ).join("");
+    $("miniStatus").textContent = m.stamps >= TOTAL
+      ? "¡Premio listo! Puede canjear su smoothie gratis."
+      : "Le faltan " + (TOTAL - m.stamps) + " sellos para su smoothie gratis.";
+    $("cashierNotif").textContent = notifText;
+    $("cashierLockTime").textContent = new Date().toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"});
+    $("cashierResult").classList.add("show");
+    $("redeemBtn").style.display = m.stamps >= TOTAL ? "inline-block" : "none";
+  }
+
+  $("stampBtn").addEventListener("click", () => {
+    const m = findMember($("cashierInput").value);
+    if (!m) { $("cashierMsg").textContent = "No encontré a ese miembro. Revisa el ID o el nombre."; return; }
+    if (m.stamps >= TOTAL) {
+      $("cashierMsg").textContent = m.name + " ya tiene su premio listo. Usa «Canjear smoothie gratis».";
+      showCashier(m, CFG.notifications.rewardReady);
+      return;
+    }
+    m.stamps++;
+    m.visits++;
+    m.lastVisit = new Date().toISOString().slice(0, 10);
+    save(); renderAll();
+    const text = m.stamps >= TOTAL
+      ? CFG.notifications.rewardReady
+      : CFG.notifications.stampEarned(m.stamps, TOTAL);
+    $("cashierMsg").textContent = "Sello sumado a " + m.name + " (" + m.stamps + " de " + TOTAL + ").";
+    showCashier(m, text);
+  });
+
+  $("redeemBtn").addEventListener("click", () => {
+    if (!current) return;
+    current.stamps = 0;
+    current.redeemed++;
+    save(); renderAll();
+    $("cashierMsg").textContent = "Smoothie gratis canjeado para " + current.name + ". Sellos en cero, a empezar de nuevo.";
+    showCashier(current, "¡Gracias por venir! Tu smoothie gratis está en camino. Vuelve pronto por tu siguiente sello.");
+    $("redeemBtn").style.display = "none";
+  });
+
+  $("searchInput").addEventListener("input", (e) => renderTable(e.target.value));
+
+  $("previewNotifBtn").addEventListener("click", () => {
+    $("notifPrevTitle").textContent = $("notifTitle").value.trim() || "(sin título)";
+    $("notifPrevBody").textContent = $("notifBody").value.trim() || "(sin mensaje)";
+    $("notifLockTime").textContent = new Date().toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"});
+    const target = $("notifTarget").value;
+    const count = target === "all" ? data.members.length
+      : target === "almost" ? data.members.filter(m => m.stamps === TOTAL - 1).length
+      : data.members.filter(m => m.lastVisit < "2026-11-11").length;
+    $("notifPreview").style.display = "block";
+    $("previewNotifBtn").textContent = "Vista previa lista · " + count + " destinatarios en la demo";
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
