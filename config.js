@@ -28,10 +28,10 @@ const SMOOTHIE_CONFIG = {
   brand: {
     colors: {
       black: "#111111",
-      green: "#0B3D2E",                 // verde profundo
-      greenLight: "#1E6B4F",
-      gold: "#E8A93D",                  // dorado / ámbar
-      cream: "#FAF6EF",
+      green: "#111111",                 // negro (antes verde profundo)
+      greenLight: "#2B2B2B",            // gris oscuro
+      gold: "#FFFFFF",                  // blanco (antes dorado)
+      cream: "#000000",                 // negro (antes crema)
     },
     font: "Montserrat",
     instagram: "https://www.instagram.com/smoothie_lab_",

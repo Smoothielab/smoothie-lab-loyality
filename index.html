@@ -12,12 +12,12 @@
 <script src="config.js"></script>
 <style>
   :root{
-    --black:#111111; --green:#0B3D2E; --green-light:#1E6B4F; --gold:#E8A93D;
-    --cream:#FAF6EF; --white:#fff; --muted:#5b6b62; --line:#e8e2d5;
+    --black:#000000; --green:#111111; --green-light:#2b2b2b; --gold:#ffffff;
+    --cream:#000000; --white:#fff; --muted:#b8b8b8; --line:#2a2a2a;
   }
   *{box-sizing:border-box; margin:0; padding:0}
-  body{font-family:'Montserrat',system-ui,sans-serif; color:var(--black); background:var(--cream); line-height:1.55}
-  a{color:var(--green-light)}
+  body{font-family:'Montserrat',system-ui,sans-serif; color:#fff; background:#000; line-height:1.55}
+  a{color:#fff}
   .wrap{max-width:1080px; margin:0 auto; padding:0 20px}
   header{background:var(--green); color:#fff; padding:14px 0; position:sticky; top:0; z-index:10}
   header .wrap{display:flex; align-items:center; gap:12px; justify-content:space-between}
@@ -27,7 +27,7 @@
   nav a{color:#fff; text-decoration:none; font-weight:600; font-size:.9rem; margin-left:18px}
   nav a:hover{color:var(--gold)}
 
-  .hero{background:linear-gradient(160deg, var(--green) 0%, #0d4a37 60%, var(--green-light) 100%); color:#fff; padding:56px 0 64px}
+  .hero{background:linear-gradient(160deg, #000000 0%, #111111 60%, #1c1c1c 100%); color:#fff; padding:56px 0 64px}
   .hero .wrap{display:grid; grid-template-columns:1.15fr .85fr; gap:40px; align-items:center}
   .hero h1{font-size:2.5rem; line-height:1.12; font-weight:900}
   .hero h1 span{color:var(--gold)}
@@ -38,12 +38,12 @@
   .btn-gold:hover{filter:brightness(1.07)}
   .btn-outline{border-color:#fff; color:#fff; background:transparent}
   .btn-outline:hover{background:rgba(255,255,255,.12)}
-  .btn-dark{background:var(--black); color:#fff}
+  .btn-dark{background:#fff; color:#000}
   .hero-note{margin-top:16px; font-size:.85rem; opacity:.75}
 
   /* Tarjeta de wallet (vista previa) */
-  .pass{background:linear-gradient(150deg, #0d4a37, var(--green) 55%, #083626); border-radius:20px; color:#fff; padding:22px; box-shadow:0 18px 40px rgba(11,61,46,.35); position:relative; overflow:hidden}
-  .pass::after{content:""; position:absolute; right:-40px; top:-40px; width:170px; height:170px; border-radius:50%; background:rgba(232,169,61,.14)}
+  .pass{background:linear-gradient(150deg, #1c1c1c, #111111 55%, #000000); border-radius:20px; color:#fff; padding:22px; box-shadow:0 18px 40px rgba(0,0,0,.6); position:relative; overflow:hidden}
+  .pass::after{content:""; position:absolute; right:-40px; top:-40px; width:170px; height:170px; border-radius:50%; background:rgba(255,255,255,.08)}
   .pass-head{display:flex; align-items:center; gap:10px}
   .pass-head img{width:30px; height:30px}
   .pass-head .t{font-weight:800; letter-spacing:.08em; font-size:.95rem}
@@ -67,25 +67,25 @@
   h2{font-size:1.7rem; font-weight:900; margin-bottom:8px}
   .sub{color:var(--muted); margin-bottom:28px; max-width:640px}
   .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
-  .step{background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px}
-  .step .n{width:40px; height:40px; border-radius:50%; background:var(--green); color:var(--gold); font-weight:900; display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin-bottom:12px}
+  .step{background:#111; border:1px solid var(--line); border-radius:16px; padding:22px}
+  .step .n{width:40px; height:40px; border-radius:50%; background:#fff; color:#000; font-weight:900; display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin-bottom:12px}
   .step h3{font-size:1.05rem; margin-bottom:6px}
   .step p{font-size:.92rem; color:var(--muted)}
 
-  .register{background:#fff; border:1px solid var(--line); border-radius:20px; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start}
+  .register{background:#111; border:1px solid var(--line); border-radius:20px; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start}
   .register h3{font-size:1.25rem; margin-bottom:6px}
   .register p{color:var(--muted); font-size:.93rem; margin-bottom:16px}
   .field{margin-bottom:12px}
   .field label{display:block; font-weight:700; font-size:.82rem; margin-bottom:5px}
-  .field input{width:100%; padding:12px 14px; border:1.5px solid #d8d2c2; border-radius:10px; font-family:inherit; font-size:1rem}
+  .field input{width:100%; padding:12px 14px; border:1.5px solid #3a3a3a; background:#000; color:#fff; border-radius:10px; font-family:inherit; font-size:1rem}
   .field input:focus{outline:2px solid var(--gold); border-color:var(--gold)}
-  .qr-box{text-align:center; background:var(--cream); border-radius:16px; padding:20px}
+  .qr-box{text-align:center; background:#1c1c1c; border-radius:16px; padding:20px}
   .qr-box #qrcode{display:inline-block; background:#fff; padding:12px; border-radius:12px}
   .qr-box p{font-size:.85rem; color:var(--muted); margin-top:12px}
-  .qr-box code{font-size:.8rem; background:#fff; padding:2px 6px; border-radius:6px; border:1px solid var(--line)}
+  .qr-box code{font-size:.8rem; background:#000; color:#fff; padding:2px 6px; border-radius:6px; border:1px solid var(--line)}
   .wallet-btns{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; justify-content:center}
   .wallet-btns .btn{font-size:.88rem; padding:11px 18px}
-  .notice{margin-top:14px; background:#FFF7E0; border:1px solid #f0d48a; color:#6b4d00; border-radius:12px; padding:12px 14px; font-size:.85rem; text-align:left; display:none}
+  .notice{margin-top:14px; background:#1c1c1c; border:1px solid #3a3a3a; color:#fff; border-radius:12px; padding:12px 14px; font-size:.85rem; text-align:left; display:none}
   .notice.show{display:block}
   .notice code{background:rgba(0,0,0,.06); padding:1px 5px; border-radius:5px; font-size:.8rem; word-break:break-all}
 
@@ -96,7 +96,7 @@
   .phone-screen{background:#000; border-radius:24px; min-height:300px; padding:16px 12px; position:relative; overflow:hidden}
   .phone-time{text-align:center; color:#fff; font-weight:700; font-size:.8rem; opacity:.8}
   .lock-notif{margin-top:26px; background:rgba(255,255,255,.16); backdrop-filter:blur(8px); border-radius:16px; padding:12px; display:flex; gap:10px; align-items:flex-start}
-  .lock-notif img{width:34px; height:34px; border-radius:8px; background:var(--green); padding:4px}
+  .lock-notif img{width:34px; height:34px; border-radius:8px; background:#1c1c1c; padding:4px}
   .lock-notif .app{font-size:.72rem; font-weight:700; color:#fff}
   .lock-notif .time{float:right; font-size:.68rem; opacity:.7}
   .lock-notif .msg{font-size:.85rem; color:#fff; margin-top:2px}
@@ -104,7 +104,7 @@
   .near-result small{display:block; font-weight:400; opacity:.8; margin-top:4px}
 
   .faq{max-width:760px}
-  .faq details{background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:10px}
+  .faq details{background:#111; border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:10px}
   .faq summary{font-weight:700; cursor:pointer}
   .faq p{margin-top:8px; color:var(--muted); font-size:.93rem}
 
@@ -208,7 +208,7 @@
           </div>
           <button class="btn btn-dark" type="submit">Crear mi tarjeta</button>
         </form>
-        <p id="registerMsg" style="margin-top:12px;font-weight:700;color:var(--green-light)"></p>
+        <p id="registerMsg" style="margin-top:12px;font-weight:700;color:#fff"></p>
       </div>
       <div class="qr-box">
         <div id="qrcode"></div>
