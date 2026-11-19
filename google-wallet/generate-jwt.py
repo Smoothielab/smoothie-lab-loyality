@@ -69,8 +69,10 @@ def build_loyalty_object(issuer_id: str, member_id: str, stamps: int, name: str)
 
 def sign_save_jwt(credentials_path: str, issuer_id: str, loyalty_object: dict) -> str:
     """Firma el JWT RS256 que Google Wallet espera en el enlace de guardado."""
-    credentials = service_account.Credentials.from_service_account_file(
-        credentials_path,
+    with open(credentials_path, encoding="utf-8") as f:
+        service_account_info = json.load(f)
+    credentials = service_account.Credentials.from_service_account_info(
+        service_account_info,
         scopes=["https://www.googleapis.com/auth/wallet_object.issuer"],
     )
     # El "aud" y el "typ" son obligatorios para el flujo "Save to Wallet".
@@ -82,9 +84,9 @@ def sign_save_jwt(credentials_path: str, issuer_id: str, loyalty_object: dict) -
         # "origins" opcional: dominios autorizados para abrir el enlace.
         "origins": ["https://lealtad.smoothielab.mx"],  # TODO: dominio real
     }
-    # PyJWT firma con la llave privada de la service account.
-    private_key = credentials.signer.key
-    token = jwt.encode(claims, private_key, algorithm="RS256")
+    # PyJWT firma con la llave privada de la service account (PEM del JSON).
+    # (credentials.signer ya no expone .key en google-auth actual.)
+    token = jwt.encode(claims, service_account_info["private_key"], algorithm="RS256")
     return token
 
 

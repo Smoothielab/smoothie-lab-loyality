@@ -35,9 +35,11 @@ const STAMPS_FOR_REWARD = 8;
 const members = new Map(); // serialNumber -> { id, name, phone, stamps, redeemed, visits, lastVisit }
 const registrations = new Map(); // serialNumber -> Set de { deviceLibraryIdentifier, pushToken }
 
-// Miembro de ejemplo para probar sin registrarse.
+// Miembro 1: el dueño. Su tarjeta real de Google Wallet (SL-0001) se creó
+// el 19 nov 2026 con la clase 3388000000023246423.club-smoothie-lab.
+// SL-0001 queda reservado para Ricardo; los clientes nuevos empiezan en SL-0002.
 members.set("SL-0001", {
-  id: "SL-0001", name: "Miembro demo", phone: "", stamps: 5, redeemed: 0, visits: 14,
+  id: "SL-0001", name: "Ricardo Darder", phone: "", stamps: 0, redeemed: 0, visits: 0,
   lastVisit: new Date().toISOString().slice(0, 10),
 });
 
