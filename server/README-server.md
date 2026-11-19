@@ -7,15 +7,25 @@ Servidor de referencia en Node.js (Express) que implementa:
    recibir las actualizaciones de sellos en su pase.
 2. **API propia del negocio**: registrar miembros, sumar sellos, canjear el
    premio y mandar notificaciones.
+3. **Google Wallet** (`google-wallet.js`): `POST /api/members` genera el
+   enlace real "Save to Google Wallet" (JWT firmado con la service account),
+   `POST /api/stamp` actualiza los sellos por PATCH y `GET /r/:memberId`
+   redirige al enlace de guardado (URL corta para el QR). La clase
+   `3388000000023246423.club-smoothie-lab` ya existe y está aprobada.
 
 ## Probar en local
 
 ```bash
 cd server
 npm install
-npm start
+GOOGLE_APPLICATION_CREDENTIALS=/ruta/a/service-account.json npm start
 # El servidor escucha en http://localhost:3000
 ```
+
+Sin la variable `GOOGLE_APPLICATION_CREDENTIALS` (o
+`GOOGLE_APPLICATION_CREDENTIALS_JSON` con el contenido del JSON), el
+servidor arranca igual pero `/api/members` devuelve `saveLink: null` y la
+página muestra el aviso de demo.
 
 Prueba los endpoints (en otra terminal):
 

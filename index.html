@@ -183,7 +183,7 @@
     <div class="register">
       <div>
         <h3>Regístrate y recibe tu tarjeta</h3>
-        <p>Te damos tu ID de miembro y tu QR único. En esta demo todo se guarda solo en tu navegador (localStorage); en producción el registro lo recibe el servidor y te llega el pase real a tu wallet.</p>
+        <p>Te damos tu ID de miembro y tu QR único. Al registrarte, el servidor crea tu tarjeta real y el botón de abajo te lleva a guardarla en tu wallet.</p>
         <form id="registerForm">
           <div class="field">
             <label for="regName">Nombre</label>
@@ -283,11 +283,19 @@
     return CFG.server.installDomain + "/instalar?miembro=" + member.id;
   }
 
+  // URL del QR: con servidor, el enlace corto del servidor (redirige al
+  // Save link real de Google Wallet, corto y fácil de escanear). Sin
+  // servidor, la liga de instalación (demo).
+  function cardUrl() {
+    if (member.saveLink && API) return API + "/r/" + member.id;
+    return installUrl();
+  }
+
   function renderQR() {
-    $("installUrl").textContent = installUrl();
+    $("installUrl").textContent = cardUrl();
     const box = $("qrcode");
     box.innerHTML = "";
-    qr = new QRCode(box, { text: installUrl(), width: 180, height: 180, colorDark: "#111111", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+    qr = new QRCode(box, { text: cardUrl(), width: 180, height: 180, colorDark: "#111111", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
   }
 
   function save() { localStorage.setItem(KEY, JSON.stringify(member)); }
@@ -299,7 +307,22 @@
     member.stamps = 0; save(); renderPass();
   });
 
-  $("registerForm").addEventListener("submit", (e) => {
+  // --- Registro: con servidor crea la tarjeta real; sin servidor, demo local ---
+  // API es la URL pública del servidor (config.js: server.apiBaseUrl).
+  // Vacía = modo demo: la página no emite pases reales.
+  const API = (CFG.server.apiBaseUrl || "").replace(/\/$/, "");
+
+  async function registerViaApi(name, phone, birthdate) {
+    const res = await fetch(API + "/api/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, birthdate }),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }
+
+  $("registerForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = $("regName").value.trim();
     const phone = $("regPhone").value.trim();
@@ -312,10 +335,22 @@
       $("registerMsg").textContent = "Falta: " + missing.join(", ") + ". Completa los tres datos para crear tu tarjeta.";
       return;
     }
-    const n = Math.floor(1000 + Math.random() * 9000);
-    member = { id: "SL-" + n, name, phone, birthdate, stamps: 0 };
-    save(); renderPass(); renderQR();
-    $("registerMsg").textContent = "¡Listo, " + name.split(" ")[0] + "! Tu ID de miembro es " + member.id + ". Escanea tu QR para instalar la tarjeta.";
+    $("registerMsg").textContent = "Creando tu tarjeta…";
+    let created = null;
+    if (API) {
+      try { created = await registerViaApi(name, phone, birthdate); }
+      catch (err) { created = null; }
+    }
+    if (created && created.saveLink) {
+      member = { id: created.id, name, phone, birthdate, stamps: 0, saveLink: created.saveLink };
+      save(); renderPass(); renderQR();
+      $("registerMsg").textContent = "¡Listo, " + name.split(" ")[0] + "! Tu ID de miembro es " + member.id + ". Toca “Añadir a Google Wallet” o escanea tu QR para instalar la tarjeta.";
+    } else {
+      const n = Math.floor(1000 + Math.random() * 9000);
+      member = { id: "SL-" + n, name, phone, birthdate, stamps: 0 };
+      save(); renderPass(); renderQR();
+      $("registerMsg").textContent = "¡Listo, " + name.split(" ")[0] + "! Tu ID de miembro es " + member.id + ". (Demo: el servidor no está conectado, así que esta tarjeta es solo una vista previa.)";
+    }
     $("appleNotice").classList.remove("show");
     $("googleNotice").classList.remove("show");
   });
@@ -332,6 +367,11 @@
   });
 
   $("googleBtn").addEventListener("click", () => {
+    // Con tarjeta real, el botón abre el enlace de Google Wallet.
+    if (member.saveLink) {
+      window.open(member.saveLink, "_blank");
+      return;
+    }
     const n = $("googleNotice");
     const exampleJwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjbHViLXNtb290aGllLWxhYkByZWVtcGxhemFyLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiZ29vZ2xlIiwidHlwIjoic2F2ZXRvd2FsbGV0IiwicGF5bG9hZCI6eyJsb3lhbHR5T2JqZWN0cyI6W3siaWQiOiJSRUVNUExBWkFSLlNM" + "-0001In1dfQ.-REEMPLAZAR_POR_JWT_REAL_FIRMADO_CON_LA_SERVICE_ACCOUNT";
     n.innerHTML = "<b>Demo:</b> el enlace real de Google Wallet se genera en el servidor con un JWT firmado (ver <code>google-wallet/generate-jwt.py</code>). Enlace de ejemplo:<br><code>https://pay.google.com/gp/v/save/" + exampleJwt + "</code><br>En producción este botón te lleva directo a guardar la tarjeta en Google Wallet.";

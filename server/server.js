@@ -21,9 +21,19 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const wallet = require("./google-wallet");
 
 const app = express();
 app.use(express.json());
+
+// CORS: la landing vive en GitHub Pages (otro origen) y llama a esta API.
+app.use("/api", (req, res, next) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  if (req.method === "OPTIONS") return res.status(204).end();
+  next();
+});
 
 const PORT = process.env.PORT || 3000;
 const PASS_TYPE_ID = process.env.PASS_TYPE_IDENTIFIER || "pass.com.smoothielab.loyalty";
@@ -35,11 +45,20 @@ const STAMPS_FOR_REWARD = 8;
 const members = new Map(); // serialNumber -> { id, name, phone, stamps, redeemed, visits, lastVisit }
 const registrations = new Map(); // serialNumber -> Set de { deviceLibraryIdentifier, pushToken }
 
-// Miembro 1: el dueño. Su tarjeta real de Google Wallet (SL-0001) se creó
-// el 19 nov 2026 con la clase 3388000000023246423.club-smoothie-lab.
-// SL-0001 queda reservado para Ricardo; los clientes nuevos empiezan en SL-0002.
+// Miembros reales (las tarjetas de Google Wallet ya existen para estos IDs).
+// SL-0001 Ricardo Darder (dueño) y SL-0002 Ricardo Jimenez se crearon el
+// 19 nov 2026; SL-0003 Mariana Torres es la tarjeta de prueba con 7 sellos.
+// Los clientes nuevos empiezan en SL-0004.
 members.set("SL-0001", {
   id: "SL-0001", name: "Ricardo Darder", phone: "", stamps: 0, redeemed: 0, visits: 0,
+  lastVisit: new Date().toISOString().slice(0, 10),
+});
+members.set("SL-0002", {
+  id: "SL-0002", name: "Ricardo Jimenez", phone: "5532334567", stamps: 0, redeemed: 0, visits: 0,
+  lastVisit: new Date().toISOString().slice(0, 10),
+});
+members.set("SL-0003", {
+  id: "SL-0003", name: "Mariana Torres", phone: "", stamps: 7, redeemed: 0, visits: 0,
   lastVisit: new Date().toISOString().slice(0, 10),
 });
 
@@ -191,27 +210,44 @@ app.post("/v1/log", express.json({ type: "*/*" }), (req, res) => {
 // GET /api/members — lista de miembros (para el panel admin).
 app.get("/api/members", (req, res) => res.json([...members.values()]));
 
-// POST /api/members { name, phone } — registra un cliente y le asigna ID.
+// POST /api/members { name, phone, birthdate } — registra un cliente,
+// le asigna ID y le genera su enlace real de Google Wallet.
 app.post("/api/members", (req, res) => {
-  const { name, phone } = req.body || {};
+  const { name, phone, birthdate } = req.body || {};
   if (!name || !phone) return res.status(400).json({ error: "Faltan name y phone." });
   const id = nextMemberId();
   const member = {
-    id, name, phone, stamps: 0, redeemed: 0, visits: 1,
+    id, name, phone, birthdate: birthdate || "", stamps: 0, redeemed: 0, visits: 1,
     lastVisit: new Date().toISOString().slice(0, 10),
   };
   members.set(id, member);
-  // TODO PRODUCCIÓN: crear el LoyaltyObject de Google Wallet para este
-  // miembro y generar su enlace "Save to Google Wallet" (ver
-  // google-wallet/generate-jwt.py).
+  const saveLink = wallet.createSaveLink(member);
   return res.status(201).json({
     ...member,
+    saveLink,
+    walletConfigured: wallet.isConfigured(),
     installUrl: `${process.env.INSTALL_DOMAIN || "https://lealtad.smoothielab.mx"}/instalar?miembro=${id}`,
   });
 });
 
+// GET /api/wallet/status — dice si el servidor puede emitir pases reales.
+app.get("/api/wallet/status", (req, res) => res.json({
+  configured: wallet.isConfigured(),
+  issuerId: wallet.ISSUER_ID,
+  classId: wallet.CLASS_ID,
+}));
+
+// GET /r/:memberId — enlace corto para el QR: redirige al Save link de Google Wallet.
+app.get("/r/:memberId", (req, res) => {
+  const member = members.get(req.params.memberId);
+  if (!member) return res.status(404).json({ error: "Miembro no encontrado." });
+  const saveLink = wallet.createSaveLink(member);
+  if (!saveLink) return res.status(503).json({ error: "Google Wallet no configurado en este servidor." });
+  return res.redirect(302, saveLink);
+});
+
 // POST /api/stamp { memberId } — suma 1 sello y actualiza el pase del cliente.
-app.post("/api/stamp", (req, res) => {
+app.post("/api/stamp", async (req, res) => {
   const { memberId } = req.body || {};
   const member = members.get(memberId);
   if (!member) return res.status(404).json({ error: "Miembro no encontrado." });
@@ -224,13 +260,14 @@ app.post("/api/stamp", (req, res) => {
   const rewardReady = member.stamps >= STAMPS_FOR_REWARD;
   // 1) Avisar al iPhone para que descargue el pase nuevo.
   const push = pushToDevices(member.id);
-  // 2) TODO PRODUCCIÓN: actualizar el LoyaltyObject de Google Wallet
-  // (PATCH con los sellos nuevos y, si quieres notificación, un mensaje
-  // TEXT_AND_NOTIFY; máximo 3 por pase cada 24 h).
+  // 2) Actualizar la tarjeta de Google Wallet (si el cliente ya la guardó;
+  // si aún no, el PATCH da 404 y el siguiente enlace ya lleva el saldo nuevo).
+  const walletUpdate = await wallet.patchStamps(member);
   return res.json({
     ...member,
     rewardReady,
     pushSent: push.sent,
+    walletUpdated: walletUpdate.updated,
     message: rewardReady
       ? "¡Felicidades! Ya tienes tu smoothie gratis."
       : `¡Sello ${member.stamps} de ${STAMPS_FOR_REWARD}! Te faltan ${STAMPS_FOR_REWARD - member.stamps} para tu smoothie gratis.`,

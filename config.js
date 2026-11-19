@@ -43,6 +43,10 @@ const SMOOTHIE_CONFIG = {
     webServiceURL: "https://lealtad.smoothielab.mx/api",  // TODO: dominio real con HTTPS
     installDomain: "https://lealtad.smoothielab.mx",      // TODO: dominio real
     passTypeIdentifier: "pass.com.smoothielab.loyalty",
+    // URL pública del servidor (p. ej. Render). Vacío = modo demo: la página
+    // muestra el aviso de demo y no emite pases reales. Al desplegar el
+    // servidor, pon aquí su URL (sin / al final).
+    apiBaseUrl: "",
   },
 
   // Google Wallet (producción) — PLACEHOLDERS, reemplazar al desplegar
