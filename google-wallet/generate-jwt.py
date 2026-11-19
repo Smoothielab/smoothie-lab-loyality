@@ -18,7 +18,7 @@ Uso:
     python3 generate-jwt.py --member SL-0001 --stamps 5 --name "Mariana Torres"
 
     # O pasando el issuer ID directamente:
-    python3 generate-jwt.py --member SL-0001 --stamps 5 --issuer-id 3388000000021234567
+    python3 generate-jwt.py --member SL-0001 --stamps 5 --issuer-id 3388000000023246423
 
 El script imprime el enlace "Save to Google Wallet" listo para poner en un QR.
 
@@ -42,8 +42,8 @@ except ImportError as exc:  # pragma: no cover
         f"Detalle: {exc}"
     )
 
-# TODO: REEMPLAZAR por el issuer ID real de Google Pay & Wallet Console.
-ISSUER_ID = os.environ.get("GOOGLE_WALLET_ISSUER_ID", "REEMPLAZAR")
+# Issuer ID confirmado el 19 nov 2026 en Google Pay & Wallet Console.
+ISSUER_ID = os.environ.get("GOOGLE_WALLET_ISSUER_ID", "3388000000023246423")
 CLASS_SUFFIX = "club-smoothie-lab"
 
 

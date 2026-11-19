@@ -47,7 +47,7 @@ const SMOOTHIE_CONFIG = {
 
   // Google Wallet (producción) — PLACEHOLDERS, reemplazar al desplegar
   googleWallet: {
-    issuerId: "REEMPLAZAR",            // TODO: issuer ID de Google Pay & Wallet Console
+    issuerId: "3388000000023246423", // Issuer ID confirmado 19 nov 2026
     classIdSuffix: "club-smoothie-lab",
   },
 
