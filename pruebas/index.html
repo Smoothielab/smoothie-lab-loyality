@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pruebas reales — Club Smoothie Lab</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #111; color: #fff; font-family: system-ui, -apple-system, sans-serif; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 8px; }
+  .sub { color: #bbb; margin: 0 0 20px; }
+  ol { background: #1c1c1c; border: 1px solid #333; border-radius: 12px; padding: 16px 16px 16px 36px; }
+  ol li { margin: 8px 0; line-height: 1.5; }
+  .card { background: #1c1c1c; border: 1px solid #333; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: center; }
+  .card h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  .id { color: #bbb; margin: 0 0 12px; }
+  .dots { font-size: 1.3rem; letter-spacing: 4px; margin: 8px 0; }
+  .dot { opacity: .25; }
+  .dot.on { opacity: 1; }
+  .note { color: #bbb; margin: 4px 0 16px; }
+  .qr { width: 230px; height: 230px; background: #fff; padding: 10px; border-radius: 12px; }
+  .btn { display: inline-block; margin-top: 16px; background: #fff; color: #111; font-weight: 700; text-decoration: none; padding: 12px 20px; border-radius: 999px; }
+  .fine { color: #888; font-size: .85rem; margin: 10px 0 0; }
+  .warn { background: #2b2b00; border: 1px solid #555; border-radius: 12px; padding: 14px 16px; line-height: 1.5; }
+  footer { margin-top: 28px; color: #888; font-size: .9rem; text-align: center; }
+  footer a { color: #fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚡ Pruebas reales — Club Smoothie Lab</h1>
+  <p class="sub">Tarjetas de prueba reales de Google Wallet. Escanea el QR o toca el botón para guardar la tarjeta en el teléfono.</p>
+  <ol>
+    <li>Abre esta página en el Android.</li>
+    <li>Toca <b>Guardar en Google Wallet</b> o escanea el QR de la tarjeta que quieras probar.</li>
+    <li>La tarjeta se guarda con sus sellos.</li>
+    <li>Para probar el cobro en caja: abre la tarjeta ya guardada en Google Wallet y muestra el QR que trae la tarjeta; ese QR trae el ID de miembro y es el que escanea el cajero. También puedes escribir el ID en el Modo cajero del panel.</li>
+  </ol>
+  
+  <article class="card">
+    <h2>Ricardo Darder</h2>
+    <p class="id">ID SL-0001 · 0 de 8 sellos</p>
+    <div class="dots"><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span></div>
+    <p class="note">El dueño. Tarjeta nueva, sin sellos.</p>
+    <img class="qr" src="qr-sl-0001.svg" alt="QR para guardar la tarjeta SL-0001 en Google Wallet">
+    <p><a class="btn" href="https://pay.google.com/gp/v/save/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzbW9vdGhpZS1sYWItd2FsbGV0QHNtb290aGllLWxhYi13YWxsZXQtNTE1MjIwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiZ29vZ2xlIiwidHlwIjoic2F2ZXRvd2FsbGV0IiwicGF5bG9hZCI6eyJsb3lhbHR5T2JqZWN0cyI6W3siaWQiOiIzMzg4MDAwMDAwMDIzMjQ2NDIzLlNMLTAwMDEiLCJjbGFzc0lkIjoiMzM4ODAwMDAwMDAyMzI0NjQyMy5jbHViLXNtb290aGllLWxhYiIsInN0YXRlIjoiYWN0aXZlIiwiYWNjb3VudElkIjoiU0wtMDAwMSIsImFjY291bnROYW1lIjoiUmljYXJkbyBEYXJkZXIiLCJsb3lhbHR5UG9pbnRzIjp7ImxhYmVsIjoic2VsbG9zIiwiYmFsYW5jZSI6eyJpbnQiOiIwIn19LCJzZWNvbmRhcnlMb3lhbHR5UG9pbnRzIjp7ImxhYmVsIjoic21vb3RoaWVzIGdyYXRpcyIsImJhbGFuY2UiOnsiaW50IjoiMCJ9fSwiYmFyY29kZSI6eyJ0eXBlIjoiUVJfQ09ERSIsInZhbHVlIjoiU0wtMDAwMSJ9fV19LCJvcmlnaW5zIjpbImh0dHBzOi8vbGVhbHRhZC5zbW9vdGhpZWxhYi5teCJdfQ.QD000H1cdnFljQU8g11XuckINo6ZNIEMRlsBSyO4DJN4MEZQAtCvtSH8HPaqXXVAFFqaxsnfkKc991mNgnUG9E6uAqx4zsZvRYe8ayrYLG33VJU4Oh7VVMyyIi768XFw4J-g4dqusGGvNyxcuwHeObCj-px3wRUhAg50XOY-9P5wpb_s6lSrjeqJoLObqzgbekU_Ft0a6hSZ_e8zoqMb25pIKM0bP0Yhz1SpyYdpgduUf0VYm6A-94ebGtqz6PVoC_bq1pwtlC_fQRCmXtivTnenfbUJ_O_QLioFrODhCOeohBJ7Bc7OX7bsni5j7xKZXdcfWd6daMVUcyZDeoAYFQ">Guardar en Google Wallet</a></p>
+    <p class="fine">Si el QR no abre, usa el botón.</p>
+  </article>
+  <article class="card">
+    <h2>Ricardo Jimenez</h2>
+    <p class="id">ID SL-0002 · 0 de 8 sellos</p>
+    <div class="dots"><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span><span class="dot">⚡</span></div>
+    <p class="note">Cliente ficticio de prueba.</p>
+    <img class="qr" src="qr-sl-0002.svg" alt="QR para guardar la tarjeta SL-0002 en Google Wallet">
+    <p><a class="btn" href="https://pay.google.com/gp/v/save/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzbW9vdGhpZS1sYWItd2FsbGV0QHNtb290aGllLWxhYi13YWxsZXQtNTE1MjIwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiZ29vZ2xlIiwidHlwIjoic2F2ZXRvd2FsbGV0IiwicGF5bG9hZCI6eyJsb3lhbHR5T2JqZWN0cyI6W3siaWQiOiIzMzg4MDAwMDAwMDIzMjQ2NDIzLlNMLTAwMDIiLCJjbGFzc0lkIjoiMzM4ODAwMDAwMDAyMzI0NjQyMy5jbHViLXNtb290aGllLWxhYiIsInN0YXRlIjoiYWN0aXZlIiwiYWNjb3VudElkIjoiU0wtMDAwMiIsImFjY291bnROYW1lIjoiUmljYXJkbyBKaW1lbmV6IiwibG95YWx0eVBvaW50cyI6eyJsYWJlbCI6InNlbGxvcyIsImJhbGFuY2UiOnsiaW50IjoiMCJ9fSwic2Vjb25kYXJ5TG95YWx0eVBvaW50cyI6eyJsYWJlbCI6InNtb290aGllcyBncmF0aXMiLCJiYWxhbmNlIjp7ImludCI6IjAifX0sImJhcmNvZGUiOnsidHlwZSI6IlFSX0NPREUiLCJ2YWx1ZSI6IlNMLTAwMDIifX1dfSwib3JpZ2lucyI6WyJodHRwczovL2xlYWx0YWQuc21vb3RoaWVsYWIubXgiXX0.bsx28FcqPS0eVQ1oQtaq4jX7dAbjYqzrUs5T7yxRZYF1yXnAAZD_IerVfCqujo7KyAto9TbtBgPwl2Q4gT8ZiMW0F0Ibz9RVQBBEWCP82ReVe61r78TIRQr9fq42CW1VB5RqP0yOFvlqGYVccc2_495JjwoFGEbrkFFm9QoY8sMflocjYE7asGVxlpOHgloyPiCgBN2fhNXiPQkuOGGr8o6IOJIp_x-trIMZYATyQIb626v0jET2Lo9uKEwS11uM1MMtj-9FfcQQbw8_3clP9ogIxhDAXfe4h7M6gfZdg1N4_qpFlbNhzb06MdgO82Loz1hdHtY27_72WxEcDKIdbQ">Guardar en Google Wallet</a></p>
+    <p class="fine">Si el QR no abre, usa el botón.</p>
+  </article>
+  <article class="card">
+    <h2>Mariana Torres</h2>
+    <p class="id">ID SL-0003 · 7 de 8 sellos</p>
+    <div class="dots"><span class="dot on">⚡</span><span class="dot on">⚡</span><span class="dot on">⚡</span><span class="dot on">⚡</span><span class="dot on">⚡</span><span class="dot on">⚡</span><span class="dot on">⚡</span><span class="dot">⚡</span></div>
+    <p class="note">A 1 sello del smoothie gratis. Para probar el estado de premio.</p>
+    <img class="qr" src="qr-sl-0003.svg" alt="QR para guardar la tarjeta SL-0003 en Google Wallet">
+    <p><a class="btn" href="https://pay.google.com/gp/v/save/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzbW9vdGhpZS1sYWItd2FsbGV0QHNtb290aGllLWxhYi13YWxsZXQtNTE1MjIwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiZ29vZ2xlIiwidHlwIjoic2F2ZXRvd2FsbGV0IiwicGF5bG9hZCI6eyJsb3lhbHR5T2JqZWN0cyI6W3siaWQiOiIzMzg4MDAwMDAwMDIzMjQ2NDIzLlNMLTAwMDMiLCJjbGFzc0lkIjoiMzM4ODAwMDAwMDAyMzI0NjQyMy5jbHViLXNtb290aGllLWxhYiIsInN0YXRlIjoiYWN0aXZlIiwiYWNjb3VudElkIjoiU0wtMDAwMyIsImFjY291bnROYW1lIjoiTWFyaWFuYSBUb3JyZXMiLCJsb3lhbHR5UG9pbnRzIjp7ImxhYmVsIjoic2VsbG9zIiwiYmFsYW5jZSI6eyJpbnQiOiI3In19LCJzZWNvbmRhcnlMb3lhbHR5UG9pbnRzIjp7ImxhYmVsIjoic21vb3RoaWVzIGdyYXRpcyIsImJhbGFuY2UiOnsiaW50IjoiMCJ9fSwiYmFyY29kZSI6eyJ0eXBlIjoiUVJfQ09ERSIsInZhbHVlIjoiU0wtMDAwMyJ9fV19LCJvcmlnaW5zIjpbImh0dHBzOi8vbGVhbHRhZC5zbW9vdGhpZWxhYi5teCJdfQ.eHExJ9QXyOfHzR1YFfan1TeVVy4PTFXyu9SmRRk4_NN5j9NSpsfvIkxWdy9nrs3NOzQF2X83Ocehv1D0_4HjBM_OkBU522UZzb-OrFBd0amCao1AqnmGfHJ5nDc_iwBegUsrv1B1lO4dVMCFf5Lq5fIB-h32fdOOQPidWwrf97B0AGOMhGqbZueMYUt-vrkxhhOylZespbgxiDTVzqBtvmwkCEEmqMqkl1Do-Gw6PxgfzN0Kx2UPa9ucknWBFZ-KJdlMJFghT-g2xGK6JYdsz7vm7qaqO59Ib2tGuKmOt1DToGeWSSeNcXEIafaKmA7PTrd_WrMk3uCNESW5K48aHA">Guardar en Google Wallet</a></p>
+    <p class="fine">Si el QR no abre, usa el botón.</p>
+  </article>
+  <p class="warn"><b>Nota:</b> los sellos de estas tarjetas de prueba no se actualizan solos todavía; eso lo hace el servidor cuando esté desplegado. Para ver cómo se actualiza una tarjeta en vivo, pide que se le sumen sellos por API.</p>
+  <footer><a href="../index.html">← Volver a la tarjeta</a> · <a href="../admin/index.html">Panel del negocio</a><br>Smoothie Lab · Plaza Luna, Zibatá, Querétaro</footer>
+</div>
+</body>
+</html>
